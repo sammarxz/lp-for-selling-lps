@@ -5,7 +5,7 @@ export const whatsappMessages = {
       "Olá Sam! Vim pelo site e me interessei pela landing page. Gostaria de saber mais detalhes sobre o processo!",
 
     ready_to_hire:
-      "Oi Sam! Vim pelo chat do site e já quero contratar a landing page por R$ 497. Como fazemos?",
+      "Oi Sam! Vim pelo site e já quero contratar a landing page por R$ 497. Como fazemos?",
 
     want_call:
       "Olá! Vim pelo site e gostaria de agendar uma conversa de 15min antes de fechar. Quando você tem disponibilidade?",
@@ -15,6 +15,15 @@ export const whatsappMessages = {
 
     has_questions:
       "Olá! Vim pelo site mas ainda tenho algumas dúvidas sobre a landing page. Pode me ajudar?",
+
+    urgent_need:
+      "🚨 URGENTE - Sam! Preciso de uma landing page para HOJE. É possível? Pago valor extra se necessário!",
+
+    saw_portfolio:
+      "Oi Sam! Vi seus projetos (Urbanus, Bíblia 365) e fiquei impressionado. Quero algo no mesmo nível!",
+
+    price_question:
+      "Olá! Vi que o preço é R$ 497. Gostaria de entender melhor o que está incluído neste valor.",
   },
 
   // Respostas automáticas do Sam (para você usar como template)

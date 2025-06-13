@@ -1,8 +1,9 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from "react";
 
-import { chatFlow } from '@/data/chat-flow';
-import { SITE_CONFIG } from '@/lib/constants';
-import { ChatMessage, ChatOption } from '@/lib/types';
+import { chatFlow } from "@/data/chat-flow";
+import * as fbpixel from "@/lib/fbpixel";
+import { ChatMessage, ChatOption } from "@/lib/types";
+import { useWhatsAppIntegration } from "./useWhatsAppIntegration";
 
 export function useChat(shouldStart: boolean = false) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -11,17 +12,18 @@ export function useChat(shouldStart: boolean = false) {
   const [isComplete, setIsComplete] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [activeOptionsMessageId, setActiveOptionsMessageId] = useState<string | null>(null);
+  
+  const { sendToWhatsApp } = useWhatsAppIntegration();
 
   const addMessage = useCallback((message: Omit<ChatMessage, 'id' | 'timestamp'>) => {
     const newMessage: ChatMessage = {
-      ...message, // ✅ Isso inclui linkPreviews se existir
+      ...message,
       id: Math.random().toString(36).substr(2, 9),
       timestamp: new Date()
     };
     
     setMessages(prev => [...prev, newMessage]);
     
-    // Se a mensagem tem opções, define como ativa
     if (message.options && message.options.length > 0) {
       setActiveOptionsMessageId(newMessage.id);
     }
@@ -30,7 +32,6 @@ export function useChat(shouldStart: boolean = false) {
   }, []);
 
   const addUserMessage = useCallback((option: ChatOption) => {
-    // Remove as opções ativas antes de adicionar resposta do usuário
     setActiveOptionsMessageId(null);
     
     addMessage({
@@ -38,55 +39,61 @@ export function useChat(shouldStart: boolean = false) {
       content: option.text.replace(/[👍⏰🤔💰👀⚡🎯🤝❓💸📞🎉📱📅]/g, '').trim()
     });
 
+    // Track interaction no Facebook Pixel
+    fbpixel.trackViewContent('chat_interaction');
+
     if (option.nextStep === 'end') {
       setIsComplete(true);
-      // Redirect to WhatsApp
+      
+      // Usar o hook para enviar para WhatsApp
       setTimeout(() => {
-        const message = encodeURIComponent('Olá! Vim pelo site e quero contratar uma landing page!');
-        window.open(`${SITE_CONFIG.contact.whatsapp}?text=${message}`, '_blank');
+        sendToWhatsApp('ready_to_hire');
       }, 1000);
       return;
     }
 
     setCurrentStep(option.nextStep);
-  }, [addMessage]);
+  }, [addMessage, sendToWhatsApp]);
 
-  const processStep = useCallback((stepId: string) => {
-    const step = chatFlow[stepId];
-    if (!step) return;
+  const processStep = useCallback(
+    (stepId: string) => {
+      const step = chatFlow[stepId];
+      if (!step) return;
 
-    let delay = 0;
+      let delay = 0;
 
-    step.messages.forEach((msg, index) => {
-      delay += msg.delay || 1000;
-      
-      setTimeout(() => {
-        if (index === 0) setIsTyping(true);
-        
-        // ✅ IMPORTANTE: Passar TODA a mensagem, incluindo linkPreviews
-        addMessage({
-          type: msg.type,
-          content: msg.content,
-          linkPreviews: msg.linkPreviews, // ✅ Agora passa linkPreviews
-          options: index === step.messages.length - 1 ? step.options : undefined
-        });
-        
-        if (index === step.messages.length - 1) {
-          setIsTyping(false);
-        }
-      }, delay);
-    });
-  }, [addMessage]);
+      step.messages.forEach((msg, index) => {
+        delay += msg.delay || 1000;
 
-  // Inicia o chat quando shouldStart vira true
+        setTimeout(() => {
+          if (index === 0) setIsTyping(true);
+
+          addMessage({
+            type: msg.type,
+            content: msg.content,
+            linkPreviews: msg.linkPreviews,
+            options:
+              index === step.messages.length - 1 ? step.options : undefined,
+          });
+
+          if (index === step.messages.length - 1) {
+            setIsTyping(false);
+          }
+        }, delay);
+      });
+    },
+    [addMessage]
+  );
+
+  // Track quando o chat inicia
   useEffect(() => {
     if (shouldStart && !hasStarted) {
       setHasStarted(true);
-      setCurrentStep('start');
+      setCurrentStep("start");
+      fbpixel.trackViewContent("chat_start");
     }
   }, [shouldStart, hasStarted]);
 
-  // Processa step apenas quando currentStep muda E não é null
   useEffect(() => {
     if (currentStep && hasStarted) {
       processStep(currentStep);
@@ -99,6 +106,6 @@ export function useChat(shouldStart: boolean = false) {
     isComplete,
     addUserMessage,
     hasStarted,
-    activeOptionsMessageId
+    activeOptionsMessageId,
   };
 }

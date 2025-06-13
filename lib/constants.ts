@@ -1,5 +1,5 @@
 export const SITE_CONFIG = {
-  name: "Landing 24h",
+  name: "Landing Page em 24h | Sam Marxz",
   description: "Sua landing page pronta em 24 horas",
   author: {
     name: "Sam Marxz",
@@ -16,13 +16,4 @@ export const SITE_CONFIG = {
     rating: 5.0,
     ratingText: "avaliações"
   }
-} as const;
-
-export const ANIMATION_CONFIG = {
-  duration: {
-    slow: "60s",
-    medium: "30s", 
-    fast: "15s"
-  },
-  easing: "linear"
 } as const;

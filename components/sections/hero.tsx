@@ -1,10 +1,9 @@
-import { SITE_CONFIG } from "@/lib/constants";
-
-import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { SocialProof } from "@/components/ui/social-proof";
 import { ArrowDownIcon } from "@/components/ui/arrow-down-icon";
+import { Avatar } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { SocialProof } from "@/components/ui/social-proof";
+import { SITE_CONFIG } from "@/lib/constants";
 
 export function HeroSection() {
   const { author, description } = SITE_CONFIG;
@@ -41,6 +40,8 @@ export function HeroSection() {
           href="#chat"
           size="lg"
           className="group relative overflow-hidden"
+          trackingEvent="lead"
+          trackingData={{ source: "hero_cta", position: "main" }}
         >
           <span className="translate-y-0 opacity-100 transition group-hover:-translate-y-[150%] group-hover:opacity-0">
             Quero minha Landing Page

@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 
+import * as fbpixel from "@/lib/fbpixel";
 import { cn } from "@/lib/utils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -7,6 +8,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size?: "sm" | "md" | "lg";
   href?: string;
   children: React.ReactNode;
+  trackingEvent?: "lead" | "checkout" | "custom";
+  trackingData?: Record<string, any>;
 }
 
 const buttonVariants = {
@@ -23,7 +26,17 @@ const buttonSizes = {
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className, variant = "primary", size = "md", href, children, ...props },
+    {
+      className,
+      variant = "primary",
+      size = "md",
+      href,
+      children,
+      trackingEvent,
+      trackingData,
+      onClick,
+      ...props
+    },
     ref
   ) => {
     const baseClasses =
@@ -36,16 +49,37 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       className
     );
 
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      // Tracking do Facebook Pixel
+      if (trackingEvent === "lead") {
+        fbpixel.trackLead(children?.toString());
+      } else if (trackingEvent === "checkout") {
+        fbpixel.trackInitiateCheckout(trackingData?.source);
+      }
+
+      if (onClick) {
+        onClick(e);
+      }
+    };
+
+    const handleLinkClick = () => {
+      if (trackingEvent === "lead") {
+        fbpixel.trackLead(children?.toString());
+      } else if (trackingEvent === "checkout") {
+        fbpixel.trackInitiateCheckout(trackingData?.source);
+      }
+    };
+
     if (href) {
       return (
-        <a href={href} className={classes}>
+        <a href={href} className={classes} onClick={handleLinkClick}>
           {children}
         </a>
       );
     }
 
     return (
-      <button ref={ref} className={classes} {...props}>
+      <button ref={ref} className={classes} onClick={handleClick} {...props}>
         {children}
       </button>
     );
