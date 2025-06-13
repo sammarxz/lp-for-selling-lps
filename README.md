@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Landing 24h
 
-## Getting Started
+![preview image](preview.png "Website Preview")
 
-First, run the development server:
+This is a conversion-focused landing page for my freelance service where I create custom landing pages for entrepreneurs and small businesses in just 24 hours. The project demonstrates advanced web development techniques while serving as a real business tool to attract clients and generate additional revenue.
+
+**The Business Model:**
+- Offer rapid landing page development (24h delivery)
+- Target entrepreneurs who need quick, professional web presence
+- Provide an alternative income stream through freelance work
+- Showcase technical expertise to attract higher-value clients
+
+Built with Next.js 15 and modern web technologies, automatically detecting user location to serve content in Portuguese or English.
+
+## ✨ Features
+
+- **Automatic geo-detection** - Routes users to appropriate language based on location
+- **Interactive chat flow** - Guided conversation to convert visitors
+- **Optimized performance** - Fast loading with image optimization and lazy loading
+- **Facebook Pixel integration** - Built-in conversion tracking
+- **Responsive design** - Works seamlessly on all devices
+- **SEO optimized** - International SEO with hreflang and structured data
+
+## 🚀 Quick Start
 
 ```bash
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the project.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🌍 Internationalization
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The app automatically redirects users based on their location:
+- **Portuguese countries** (BR, PT, AO, etc.) → `/` (Portuguese)
+- **Other countries** → `/en` (English)
 
-## Learn More
+Manual language switching is available via the language toggle in the header.
 
-To learn more about Next.js, take a look at the following resources:
+## 📁 Key Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+├── app/[locale]/          # Internationalized pages
+├── components/            # React components
+│   ├── sections/         # Page sections (hero, chat, projects)
+│   └── ui/               # Reusable UI components
+├── hooks/                # Custom React hooks
+├── lib/                  # Utilities and configurations
+├── messages/             # i18n translation files
+└── middleware.ts         # Geo-detection and routing
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠 Tech Stack
 
-## Deploy on Vercel
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type safety
+- **Tailwind CSS 4** - Styling
+- **next-intl** - Internationalization
+- **React Intersection Observer** - Scroll animations
+- **Facebook Pixel** - Analytics and conversion tracking
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📱 Contact Integration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The chat flow integrates with WhatsApp for lead conversion, with messages automatically translated based on the user's language preference.
