@@ -1,9 +1,10 @@
-import { useState, useCallback, useEffect } from "react";
-
-import { chatFlow } from "@/data/chat-flow";
-import * as fbpixel from "@/lib/fbpixel";
-import { ChatMessage, ChatOption } from "@/lib/types";
-import { useWhatsAppIntegration } from "./useWhatsAppIntegration";
+import { useState, useCallback, useEffect } from 'react';
+import { useLocale } from 'next-intl';
+import { chatFlow } from '@/data/chat-flow';
+import { chatFlowEn } from '@/data/chat-flow-en';
+import { useWhatsAppIntegration } from './useWhatsAppIntegration';
+import { ChatMessage, ChatOption } from '@/lib/types';
+import * as fbpixel from '@/lib/fbpixel';
 
 export function useChat(shouldStart: boolean = false) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -13,7 +14,14 @@ export function useChat(shouldStart: boolean = false) {
   const [hasStarted, setHasStarted] = useState(false);
   const [activeOptionsMessageId, setActiveOptionsMessageId] = useState<string | null>(null);
   
+  // Hooks para internacionalização
+  const locale = useLocale();
   const { sendToWhatsApp } = useWhatsAppIntegration();
+
+  // Selecionar o chat flow baseado no idioma
+  const getCurrentChatFlow = useCallback(() => {
+    return locale === 'en' ? chatFlowEn : chatFlow;
+  }, [locale]);
 
   const addMessage = useCallback((message: Omit<ChatMessage, 'id' | 'timestamp'>) => {
     const newMessage: ChatMessage = {
@@ -39,13 +47,13 @@ export function useChat(shouldStart: boolean = false) {
       content: option.text.replace(/[👍⏰🤔💰👀⚡🎯🤝❓💸📞🎉📱📅]/g, '').trim()
     });
 
-    // Track interaction no Facebook Pixel
-    fbpixel.trackViewContent('chat_interaction');
+    // Track interaction no Facebook Pixel com idioma
+    fbpixel.trackViewContent(`${locale}_chat_interaction`);
 
     if (option.nextStep === 'end') {
       setIsComplete(true);
       
-      // Usar o hook para enviar para WhatsApp
+      // Usar o hook do WhatsApp (já adaptado para idiomas)
       setTimeout(() => {
         sendToWhatsApp('ready_to_hire');
       }, 1000);
@@ -53,46 +61,43 @@ export function useChat(shouldStart: boolean = false) {
     }
 
     setCurrentStep(option.nextStep);
-  }, [addMessage, sendToWhatsApp]);
+  }, [addMessage, sendToWhatsApp, locale]);
 
-  const processStep = useCallback(
-    (stepId: string) => {
-      const step = chatFlow[stepId];
-      if (!step) return;
+  const processStep = useCallback((stepId: string) => {
+    const currentFlow = getCurrentChatFlow();
+    const step = currentFlow[stepId];
+    if (!step) return;
 
-      let delay = 0;
+    let delay = 0;
 
-      step.messages.forEach((msg, index) => {
-        delay += msg.delay || 1000;
-
-        setTimeout(() => {
-          if (index === 0) setIsTyping(true);
-
-          addMessage({
-            type: msg.type,
-            content: msg.content,
-            linkPreviews: msg.linkPreviews,
-            options:
-              index === step.messages.length - 1 ? step.options : undefined,
-          });
-
-          if (index === step.messages.length - 1) {
-            setIsTyping(false);
-          }
-        }, delay);
-      });
-    },
-    [addMessage]
-  );
+    step.messages.forEach((msg, index) => {
+      delay += msg.delay || 1000;
+      
+      setTimeout(() => {
+        if (index === 0) setIsTyping(true);
+        
+        addMessage({
+          type: msg.type,
+          content: msg.content,
+          linkPreviews: msg.linkPreviews,
+          options: index === step.messages.length - 1 ? step.options : undefined
+        });
+        
+        if (index === step.messages.length - 1) {
+          setIsTyping(false);
+        }
+      }, delay);
+    });
+  }, [addMessage, getCurrentChatFlow]);
 
   // Track quando o chat inicia
   useEffect(() => {
     if (shouldStart && !hasStarted) {
       setHasStarted(true);
-      setCurrentStep("start");
-      fbpixel.trackViewContent("chat_start");
+      setCurrentStep('start');
+      fbpixel.trackViewContent(`${locale}_chat_start`);
     }
-  }, [shouldStart, hasStarted]);
+  }, [shouldStart, hasStarted, locale]);
 
   useEffect(() => {
     if (currentStep && hasStarted) {
@@ -106,6 +111,6 @@ export function useChat(shouldStart: boolean = false) {
     isComplete,
     addUserMessage,
     hasStarted,
-    activeOptionsMessageId,
+    activeOptionsMessageId
   };
 }

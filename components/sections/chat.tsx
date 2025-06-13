@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useInView } from "react-intersection-observer";
+import { useTranslations } from "next-intl";
 
 import { useChat } from "@/hooks/useChat";
 import { cn } from "@/lib/utils";
@@ -10,6 +11,7 @@ import { Button } from "../ui/button";
 import { LinkPreview } from "../ui/link-preview";
 
 export function ChatSection() {
+  const t = useTranslations("chat");
   const { ref, inView } = useInView({
     threshold: 0.3,
     triggerOnce: true,
@@ -41,8 +43,6 @@ export function ChatSection() {
         <div className="min-h-screen h-auto overflow-y-auto p-6 space-y-4">
           {hasStarted &&
             messages.map((message) => {
-              console.log(message);
-
               return (
                 <div key={message.id}>
                   {!message.linkPreviews ? (
@@ -58,7 +58,7 @@ export function ChatSection() {
                         className={cn(
                           "max-w-[80%] rounded-2xl px-4 py-3 text-sm",
                           message.type === "user"
-                            ? "bg-blue-500 text-white"
+                            ? "bg-gray-900 text-white"
                             : "bg-gray-100 text-gray-900"
                         )}
                       >
@@ -128,7 +128,7 @@ export function ChatSection() {
                       style={{ animationDelay: "0.2s" }}
                     ></div>
                   </div>
-                  <span className="text-gray-500 ml-2">digitando...</span>
+                  <span className="text-gray-500 ml-2">{t("typing")}</span>
                 </div>
               </div>
             </div>
@@ -136,7 +136,7 @@ export function ChatSection() {
 
           {!hasStarted && inView && (
             <div className="flex justify-center items-center h-32">
-              <div className="text-gray-500 text-sm">Iniciando conversa...</div>
+              <div className="text-gray-500 text-sm">{t("starting")}</div>
             </div>
           )}
 
@@ -146,7 +146,7 @@ export function ChatSection() {
         {hasStarted && isComplete && (
           <div className="px-6 py-4 bg-green-50 border-t border-green-200">
             <div className="text-center text-sm text-green-700">
-              🎉 Obrigado! Te vejo no WhatsApp para finalizarmos tudo!
+              {t("completed")}
             </div>
           </div>
         )}

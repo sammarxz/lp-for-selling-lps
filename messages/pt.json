@@ -1,0 +1,45 @@
+{
+  "site": {
+    "name": "Landing 24h",
+    "description": "Sua landing page pronta em 24 horas",
+    "tagline": "Criamos landing pages de alta performance em menos de um dia"
+  },
+  "author": {
+    "name": "Sam Marxz",
+    "role": "Designer e Desenvolvedor Web"
+  },
+  "hero": {
+    "title": "Sua landing page pronta em 24 horas",
+    "description": "Criamos landing pages de alta performance em menos de um dia",
+    "cta": "Quero minha Landing Page",
+    "ctaWhatsapp": "Falar Direto no WhatsApp",
+    "badge": "Últimas 3 vagas desta semana"
+  },
+  "socialProof": {
+    "users": "+{count} Empreendedores já aprovaram",
+    "rating": "avaliações"
+  },
+  "chat": {
+    "typing": "digitando...",
+    "starting": "Iniciando conversa...",
+    "completed": "🎉 Obrigado! Te vejo no WhatsApp para finalizarmos tudo!"
+  },
+  "pricing": {
+    "currency": "R$",
+    "price": "497",
+    "installments": "ou 3x de R$ 179",
+    "guarantee": "Garantia de 7 dias"
+  },
+  "whatsapp": {
+    "interested": "Olá Sam! Vim pelo site e me interessei pela landing page. Gostaria de saber mais detalhes sobre o processo!",
+    "readyToHire": "Oi Sam! Vim pelo site e já quero contratar a landing page por R$ 497. Como fazemos?",
+    "wantCall": "Olá! Vim pelo site e gostaria de agendar uma conversa de 15min antes de fechar. Quando você tem disponibilidade?",
+    "needExamples": "Oi Sam! Vim pelo site e gostaria de ver alguns exemplos de landing pages que você já criou antes de decidir.",
+    "hasQuestions": "Olá! Vim pelo site mas ainda tenho algumas dúvidas sobre a landing page. Pode me ajudar?"
+  },
+  "projects": {
+    "urbanus": "Plataforma que conecta milhares de compradores a imóveis e gera leads qualificados para o whatsapp",
+    "biblia365": "Saas desenvolvido em menos de uma semana com +20M de visualizações mensais",
+    "wetwo": "Landing page de alta conversão para agência de marketing digital, tráfego pago e automações"
+  }
+}

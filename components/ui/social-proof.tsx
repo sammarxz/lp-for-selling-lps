@@ -1,9 +1,14 @@
+"use client";
+
 import Image from "next/image";
+import { useTranslations, useLocale } from "next-intl";
 import { Rating } from "./rating";
-import { SITE_CONFIG } from "@/lib/constants";
+import { getSiteConfig } from "@/lib/constants";
 
 export function SocialProof() {
-  const { social } = SITE_CONFIG;
+  const t = useTranslations("socialProof");
+  const locale = useLocale();
+  const config = getSiteConfig(locale);
 
   return (
     <div className="flex flex-col md:flex-row md:items-center gap-4">
@@ -14,7 +19,9 @@ export function SocialProof() {
             <Image
               key={`user-${index}`}
               src={`/users/${index + 1}.jpg`}
-              alt={`Usuário ${index + 1}`}
+              alt={
+                locale === "en" ? `User ${index + 1}` : `Usuário ${index + 1}`
+              }
               width={40}
               height={40}
               className="w-10 h-10 object-cover rounded-full border-2 border-white bg-gray-200"
@@ -25,12 +32,12 @@ export function SocialProof() {
 
       <div className="flex flex-col gap-2">
         <span className="text-sm text-gray-600">
-          +{social.userCount} Empreendedores já aprovaram
+          {t("users", { count: config.social.userCount })}
         </span>
 
         <div className="flex items-center gap-2">
-          <Rating rating={social.rating} size="md" showValue />
-          <span className="text-sm text-gray-600">{social.ratingText}</span>
+          <Rating rating={config.social.rating} size="md" showValue />
+          <span className="text-sm text-gray-600">{t("rating")}</span>
         </div>
       </div>
     </div>
