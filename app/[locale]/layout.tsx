@@ -158,6 +158,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   const config = getSiteConfig(locale);
   const messages = await getMessages();
   const pixelId = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
+  const gaId = "G-ZE255SHBNH"; // Seu Google Analytics ID
 
   // URLs para hreflang
   const baseUrl = "https://landing24h.marxz.me";
@@ -169,6 +170,8 @@ export default async function LocaleLayout({ children, params }: Props) {
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//get.geojs.io" />
         <link rel="dns-prefetch" href="//ipapi.co" />
+        <link rel="dns-prefetch" href="//www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="//www.google-analytics.com" />
 
         {/* Preconnect para recursos críticos */}
         <link
@@ -292,6 +295,34 @@ export default async function LocaleLayout({ children, params }: Props) {
           }}
         />
 
+        {/* Google Analytics 4 */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${gaId}', {
+              page_title: document.title,
+              page_location: window.location.href,
+              language: '${locale}',
+              custom_map: {
+                'custom_parameter_1': 'locale'
+              }
+            });
+            
+            // Event personalizado para rastrear idioma
+            gtag('event', 'page_view_with_locale', {
+              'custom_parameter_1': '${locale}',
+              'event_category': 'engagement',
+              'event_label': 'locale_' + '${locale}'
+            });
+          `}
+        </Script>
+
         {/* Facebook Pixel */}
         {pixelId && (
           <>
@@ -322,24 +353,6 @@ export default async function LocaleLayout({ children, params }: Props) {
                 alt=""
               />
             </noscript>
-          </>
-        )}
-
-        {/* Google Analytics (opcional) */}
-        {process.env.NEXT_PUBLIC_GA_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="google-analytics" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
-              `}
-            </Script>
           </>
         )}
 

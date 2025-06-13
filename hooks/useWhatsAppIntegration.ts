@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useLocale } from 'next-intl';
 import { getWhatsAppConfig } from "@/lib/whatsapp-config";
 import * as fbpixel from "@/lib/fbpixel";
+import * as gtag from "@/lib/gtag";
 
 export function useWhatsAppIntegration() {
   const locale = useLocale();
@@ -29,6 +30,13 @@ export function useWhatsAppIntegration() {
         fbpixel.trackInitiateCheckout(`${locale}_direct_hire`);
       } else {
         fbpixel.trackLead(`${locale}_whatsapp_${messageType}`);
+      }
+
+      // Track no Google Analytics
+      if (messageType === 'ready_to_hire') {
+        gtag.trackWhatsAppRedirect(`${locale}_direct_hire`, locale);
+      } else {
+        gtag.trackWhatsAppRedirect(`${locale}_whatsapp_${messageType}`, locale);
       }
 
       window.open(whatsappUrl, "_blank");

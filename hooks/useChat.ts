@@ -5,6 +5,7 @@ import { chatFlowEn } from '@/data/chat-flow-en';
 import { useWhatsAppIntegration } from './useWhatsAppIntegration';
 import { ChatMessage, ChatOption } from '@/lib/types';
 import * as fbpixel from '@/lib/fbpixel';
+import * as gtag from '@/lib/gtag';
 
 export function useChat(shouldStart: boolean = false) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -49,9 +50,15 @@ export function useChat(shouldStart: boolean = false) {
 
     // Track interaction no Facebook Pixel com idioma
     fbpixel.trackViewContent(`${locale}_chat_interaction`);
+    
+    // Track interaction no Google Analytics
+    gtag.trackChatInteraction(`chat_option_${option.value}`, locale);
 
     if (option.nextStep === 'end') {
       setIsComplete(true);
+      
+      // Track completion no GA
+      gtag.trackChatCompletion(locale);
       
       // Usar o hook do WhatsApp (já adaptado para idiomas)
       setTimeout(() => {
@@ -95,15 +102,23 @@ export function useChat(shouldStart: boolean = false) {
     if (shouldStart && !hasStarted) {
       setHasStarted(true);
       setCurrentStep('start');
+      
+      // Track no Facebook Pixel
       fbpixel.trackViewContent(`${locale}_chat_start`);
+      
+      // Track no Google Analytics
+      gtag.trackChatInteraction('chat_start', locale);
     }
   }, [shouldStart, hasStarted, locale]);
 
   useEffect(() => {
     if (currentStep && hasStarted) {
       processStep(currentStep);
+      
+      // Track cada step do chat no GA
+      gtag.trackChatInteraction(`chat_step_${currentStep}`, locale);
     }
-  }, [currentStep, processStep, hasStarted]);
+  }, [currentStep, processStep, hasStarted, locale]);
 
   return {
     messages,

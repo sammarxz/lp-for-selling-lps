@@ -1,7 +1,9 @@
 import { forwardRef } from "react";
 
 import * as fbpixel from "@/lib/fbpixel";
+import * as gtag from "@/lib/gtag";
 import { cn } from "@/lib/utils";
+import { useLocale } from "next-intl";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost";
@@ -39,6 +41,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
+    const locale = useLocale();
+
     const baseClasses =
       "cursor-pointer inline-flex items-center justify-center rounded-md font-medium transition-colors duration-200 disabled:opacity-50 disabled:pointer-events-none";
 
@@ -57,16 +61,31 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         fbpixel.trackInitiateCheckout(trackingData?.source);
       }
 
+      // Tracking do Google Analytics
+      if (trackingEvent === "lead") {
+        gtag.trackCTAClick(children?.toString(), locale);
+      } else if (trackingEvent === "checkout") {
+        gtag.trackWhatsAppRedirect(trackingData?.source, locale);
+      }
+
       if (onClick) {
         onClick(e);
       }
     };
 
     const handleLinkClick = () => {
+      // Tracking do Facebook Pixel
       if (trackingEvent === "lead") {
         fbpixel.trackLead(children?.toString());
       } else if (trackingEvent === "checkout") {
         fbpixel.trackInitiateCheckout(trackingData?.source);
+      }
+
+      // Tracking do Google Analytics
+      if (trackingEvent === "lead") {
+        gtag.trackCTAClick(children?.toString(), locale);
+      } else if (trackingEvent === "checkout") {
+        gtag.trackWhatsAppRedirect(trackingData?.source, locale);
       }
     };
 
